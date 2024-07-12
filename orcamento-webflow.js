@@ -1,10 +1,9 @@
 "use strict";
 (() => {
   // bin/live-reload.js
-  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener(
-    "change",
-    () => location.reload()
-  );
+  new EventSource(
+    `${"https://wishlist-627e28.webflow.io/"}/esbuild`
+  ).addEventListener("change", () => location.reload());
 
   // src/utils/functions.ts
   function clearCartList() {
