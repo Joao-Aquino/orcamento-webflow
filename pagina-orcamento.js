@@ -1,12 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Script carregado na página /orçamento");
   const quoteItemsContainer = document.getElementById("quote-items-container");
-  if (!quoteItemsContainer) {
-    console.error("Contêiner quote-items-container não encontrado");
-    return;
-  }
   const quoteItems = JSON.parse(localStorage.getItem("quoteItems") || "{}");
-  console.log("Itens do LocalStorage:", quoteItems);
 
   if (Object.keys(quoteItems).length === 0) {
     quoteItemsContainer.innerHTML = "<p>No items in the cart.</p>";
@@ -15,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   Object.keys(quoteItems).forEach((key) => {
     const item = quoteItems[key];
-    console.log("Adicionando item:", item);
     const itemDiv = document.createElement("div");
     itemDiv.classList.add("cart-item");
     const cartItem = `
@@ -58,3 +51,55 @@ document.addEventListener("DOMContentLoaded", () => {
   addClickEventListenersToRemoveLinks();
   addClickEventListenersToCartItemQuantityInputs();
 });
+
+function addClickEventListenersToRemoveLinks() {
+  const removeItemLinks = Array.from(
+    document.getElementsByClassName("cart-item-information-remove-link")
+  );
+  removeItemLinks.forEach((link) => {
+    link.addEventListener("click", async (event) => {
+      const target = event.target;
+      if (target) {
+        const quoteItems = await JSON.parse(
+          localStorage?.getItem("quoteItems") || "{}"
+        );
+        if (target.dataset.slug) {
+          delete quoteItems[target.dataset.slug];
+          localStorage.setItem("quoteItems", JSON.stringify(quoteItems));
+          target.parentElement?.parentElement?.remove();
+        }
+      }
+    });
+  });
+}
+
+function addClickEventListenersToCartItemQuantityInputs() {
+  const cartQuantityInputs = Array.from(
+    document.getElementsByClassName("cart-quantity")
+  );
+  cartQuantityInputs.forEach((cartQuantityInput) => {
+    const originalCartQuantityInput = cartQuantityInput;
+    const originalCartQuantityInputValue = originalCartQuantityInput.value;
+    cartQuantityInput.addEventListener("input", async (event) => {
+      const target = event.target;
+      if (target) {
+        const quoteItems = await JSON.parse(
+          localStorage?.getItem("quoteItems") || "{}"
+        );
+        if (target.dataset.slug) {
+          if (target.value === "" || target.value == null) {
+            target.setCustomValidity("Please enter a number!");
+            target.reportValidity();
+            target.setCustomValidity("");
+            quoteItems[target.dataset.slug]["quantity"] =
+              originalCartQuantityInputValue;
+            localStorage.setItem("quoteItems", JSON.stringify(quoteItems));
+            return;
+          }
+          quoteItems[target.dataset.slug]["quantity"] = target.value;
+          localStorage.setItem("quoteItems", JSON.stringify(quoteItems));
+        }
+      }
+    });
+  });
+}
