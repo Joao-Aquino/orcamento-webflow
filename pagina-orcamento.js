@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Página orçamento carregada");
   const quoteItemsContainer = document.getElementById("quote-items-container");
   const quoteItems = JSON.parse(localStorage.getItem("quoteItems") || "{}");
+  console.log("Itens do LocalStorage:", quoteItems);
 
   if (Object.keys(quoteItems).length === 0) {
     quoteItemsContainer.innerHTML = "<p>No items in the cart.</p>";
@@ -9,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   Object.keys(quoteItems).forEach((key) => {
     const item = quoteItems[key];
+    console.log("Adicionando item:", item);
     const itemDiv = document.createElement("div");
     itemDiv.classList.add("cart-item");
     const cartItem = `
